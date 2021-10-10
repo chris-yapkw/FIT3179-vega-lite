@@ -1,0 +1,312 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 500,
+  "height": 400,
+  "title": {
+    "text": "Population Density in Asian Countries (2020)",
+    "frame": "group"
+  },
+  "style": "cell",
+  "data": [
+    {"name": "country_highlight_store"},
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/chrisykw/FIT3179-vega-lite/main/homework-week10/data/AsiaPopulation2020.csv",
+      "format": {"type": "csv", "delimiter": ","}
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Population\"]) && isFinite(+datum[\"Population\"]) && isValid(datum[\"LandArea\"]) && isFinite(+datum[\"LandArea\"]) && isValid(datum[\"Density\"]) && isFinite(+datum[\"Density\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Population\"]) && isFinite(+datum[\"Population\"]) && isValid(datum[\"LandArea\"]) && isFinite(+datum[\"LandArea\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "country_highlight_Country_legend",
+      "value": null,
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Country_legend_symbols"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Country_legend_labels"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Country_legend_entries"
+            }
+          ],
+          "update": "datum.value || item().items[0].items[0].datum.value",
+          "force": true
+        },
+        {
+          "events": [{"source": "view", "type": "click"}],
+          "update": "!event.item || !datum ? null : country_highlight_Country_legend",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "country_highlight",
+      "update": "vlSelectionResolve(\"country_highlight_store\", \"union\", true, true)"
+    },
+    {
+      "name": "country_highlight_tuple",
+      "update": "country_highlight_Country_legend !== null ? {fields: country_highlight_tuple_fields, values: [country_highlight_Country_legend]} : null"
+    },
+    {
+      "name": "country_highlight_tuple_fields",
+      "value": [{"type": "E", "field": "Country"}]
+    },
+    {
+      "name": "country_highlight_toggle",
+      "value": false,
+      "on": [
+        {
+          "events": {"merge": [{"source": "view", "type": "click"}]},
+          "update": "event.shiftKey"
+        }
+      ]
+    },
+    {
+      "name": "country_highlight_modify",
+      "on": [
+        {
+          "events": {"signal": "country_highlight_tuple"},
+          "update": "modify(\"country_highlight_store\", country_highlight_toggle ? null : country_highlight_tuple, country_highlight_toggle ? null : true, country_highlight_toggle ? country_highlight_tuple : null)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "symbol",
+      "style": ["circle"],
+      "interactive": true,
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "opacity": [
+            {
+              "test": "!length(data(\"country_highlight_store\")) || vlSelectionTest(\"country_highlight_store\", datum)",
+              "value": 0.9
+            },
+            {"value": 0.1}
+          ],
+          "fill": {"scale": "color", "field": "Country"},
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"], \"Population\": format(datum[\"Population\"], \",\"), \"LandArea\": format(datum[\"LandArea\"], \",\"), \"Density\": format(datum[\"Density\"], \",\")}"
+          },
+          "ariaRoleDescription": {"value": "circle"},
+          "description": {
+            "signal": "\"Population: \" + (format(datum[\"Population\"], \"\")) + \"; LandArea: \" + (format(datum[\"LandArea\"], \"\")) + \"; Density: \" + (format(datum[\"Density\"], \".1s\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+          },
+          "x": {"scale": "x", "field": "Population"},
+          "y": {"scale": "y", "field": "LandArea"},
+          "size": {"scale": "size", "field": "Density"},
+          "shape": {"value": "circle"}
+        }
+      }
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "text",
+      "style": ["text"],
+      "interactive": true,
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "align": {"value": "right"},
+          "baseline": {"value": "middle"},
+          "dx": {"value": -12},
+          "fontSize": {"value": 11.5},
+          "fontStyle": {"value": "italic"},
+          "fill": {"value": "black"},
+          "opacity": [
+            {
+              "test": "datum['Country'] == 'China' || datum['Country'] == 'Singapore' || datum['Country'] == 'Japan' || datum['Country'] == 'Malaysia' || datum['Country'] == 'Macao' || datum['Country'] == 'Mongolia'",
+              "value": 1
+            },
+            {"value": 0}
+          ],
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"], \"Population\": format(datum[\"Population\"], \",\"), \"LandArea\": format(datum[\"LandArea\"], \",\"), \"Density\": format(datum[\"Density\"], \",\")}"
+          },
+          "description": {
+            "signal": "\"Population: \" + (format(datum[\"Population\"], \"\")) + \"; LandArea: \" + (format(datum[\"LandArea\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"]) + \"; Density: \" + (format(datum[\"Density\"], \",\"))"
+          },
+          "x": {"scale": "x", "field": "Population"},
+          "y": {"scale": "y", "field": "LandArea"},
+          "text": {
+            "signal": "isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"]"
+          }
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "log",
+      "domain": [10000, 10000000000],
+      "range": [0, {"signal": "width"}]
+    },
+    {
+      "name": "y",
+      "type": "log",
+      "domain": [1, 10000000],
+      "range": [{"signal": "height"}, 0]
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "data_0", "field": "Country", "sort": true},
+      "range": "category"
+    },
+    {
+      "name": "size",
+      "type": "threshold",
+      "domain": [10, 100, 1000, 10000],
+      "range": [10, 50, 100, 200, 300]
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "tickCount": 5,
+      "gridScale": "y",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "tickCount": 4,
+      "gridScale": "x",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Population",
+      "tickCount": 5,
+      "labelFlush": true,
+      "labelOverlap": "greedy",
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "LandArea",
+      "tickCount": 4,
+      "labelOverlap": "greedy",
+      "zindex": 0
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "symbolType": "circle",
+      "title": "Country",
+      "encode": {
+        "labels": {
+          "name": "Country_legend_labels",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"country_highlight_store\")) || (country_highlight[\"Country\"] && indexof(country_highlight[\"Country\"], datum.value) >= 0))",
+                "value": 1
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "symbols": {
+          "name": "Country_legend_symbols",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"country_highlight_store\")) || (country_highlight[\"Country\"] && indexof(country_highlight[\"Country\"], datum.value) >= 0))",
+                "value": 0.9
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "entries": {
+          "name": "Country_legend_entries",
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}}
+        }
+      }
+    },
+    {
+      "format": ".1s",
+      "size": "size",
+      "labelOverlap": "greedy",
+      "symbolType": "circle",
+      "title": "Density",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "black"},
+            "fillOpacity": {"value": 0.9},
+            "opacity": {"value": 0.9},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+  "config": {}
+}
