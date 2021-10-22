@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Ecological Footprint around the World</title>
+  <h1 style="background-color:grey;">Ecological Footprint around the World</h1>
+
+  
+
+  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+  
+  
+  <!-- CSS file -->
+  <link rel="stylesheet" type="text/css" href="styles.css" media="all">
+
+</head>
+
+<script src="https://kit.fontawesome.com/170d19f033.js" crossorigin="anonymous"></script>
+<body >
+
+<h2 >Human Development Index and Ecological Footprint </h2>
+<div id="plot" ></div>
+  
+  <script type="text/javascript">
+
+  var spec = "HDIscatterplot.vg.json";
+  vegaEmbed('#plot', spec).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+</script>
