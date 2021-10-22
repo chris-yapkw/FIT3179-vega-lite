@@ -1,0 +1,107 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 800,
+  "height": 600,
+  "title": {"text": "World Biocapacity (2016)", "frame": "group"},
+  "data": [
+    {
+      "name": "source_1",
+      "url": "https://raw.githubusercontent.com/chrisykw/FIT3179-vega-lite/main/Data%20Visualisation%202/countries.csv",
+      "format": {"type": "csv", "delimiter": ","}
+    },
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/chrisykw/FIT3179-vega-lite/main/Data%20Visualisation%202/world.topojson",
+      "format": {"type": "topojson", "feature": "world", "parse": {}},
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum[\"properties\"] && datum[\"properties\"][\"name\"]",
+          "as": "properties.name"
+        },
+        {
+          "type": "lookup",
+          "from": "source_1",
+          "key": "Country",
+          "fields": ["properties.name"],
+          "values": ["Biocapacity Deficit or Reserve"]
+        },
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Biocapacity Deficit or Reserve\"]) && isFinite(+datum[\"Biocapacity Deficit or Reserve\"])"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "size": {"signal": "[width, height]"},
+      "fit": {"signal": "data('source_0')"},
+      "type": "equalEarth"
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "shape",
+      "style": ["geoshape"],
+      "from": {"data": "source_0"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "color", "field": "Biocapacity Deficit or Reserve"},
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"properties.name\"]) ? datum[\"properties.name\"] : \"\"+datum[\"properties.name\"], \"Biocapacity Deficit or Reserve\": format(datum[\"Biocapacity Deficit or Reserve\"], \"\")}"
+          },
+          "ariaRoleDescription": {"value": "geoshape"},
+          "description": {
+            "signal": "\"Biocapacity Deficit or Reserve: \" + (format(datum[\"Biocapacity Deficit or Reserve\"], \"\")) + \"; Country: \" + (isValid(datum[\"properties.name\"]) ? datum[\"properties.name\"] : \"\"+datum[\"properties.name\"])"
+          }
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "range": {"scheme": "redblue"},
+      "interpolate": "hcl",
+      "zero": true
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "title": "Biocapacity Deficit or Reserve"
+    }
+  ],
+  "config": {}
+}
