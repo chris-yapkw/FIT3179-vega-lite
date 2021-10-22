@@ -36,6 +36,12 @@ body {background-color: khaki; text-align:center;}
 <h2 >Human Development Index (HDI) and Ecological Footprint </h2>
 <div id="plot2" ></div>
   
+<h2 >Countries with Highest Carbon Footprints </h2>
+<div id="plot3" ></div>
+  
+<h2 >Countries with Highest Forest Footprints </h2>
+<div id="plot4" ></div>
+  
   <script type="text/javascript">
 
   var spec = "RegionBar.vg.json";
@@ -46,8 +52,22 @@ body {background-color: khaki; text-align:center;}
   
   <script type="text/javascript">
 
-  var spec = "HDIscatterplot.vg.json";
-  vegaEmbed('#plot2', spec).then(function(result) {
+  var spec2 = "HDIscatterplot.vg.json";
+  vegaEmbed('#plot2', spec2).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+</script>
+  
+  <script type="text/javascript">
+  var spec3 = "carbonfootprint.vg.json";
+  vegaEmbed('#plot3', spec3).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+</script>
+  
+  <script type="text/javascript">
+  var spec4 = "forestfootprint.vg.json";
+  vegaEmbed('#plot4', spec4).then(function(result) {
     // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
   }).catch(console.error);
 </script>
