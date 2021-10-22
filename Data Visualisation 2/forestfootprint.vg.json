@@ -2,7 +2,8 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "background": "white",
   "padding": 5,
-  "width": 200,
+  "width": 500,
+  "height": 300,
   "title": {
     "text": "Top 10 Countries for Forest Footprint (tonnes)",
     "frame": "group"
